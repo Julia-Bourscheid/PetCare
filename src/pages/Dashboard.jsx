@@ -1,4 +1,4 @@
-import { Plus, RefreshCw, Syringe } from 'lucide-react'
+import { RefreshCw, Syringe } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/AppShell'
@@ -67,7 +67,6 @@ export default function Dashboard() {
           <h1>Olá, {user}! <span aria-hidden="true">🐾</span></h1>
           <p>Acompanhe os cuidados e os próximos compromissos dos seus pets.</p>
         </div>
-        <Link className="primary-button" to="/compromissos/novo"><Plus size={19} /> Novo compromisso</Link>
       </section>
 
       <section className="summary-grid" aria-label="Resumo">
