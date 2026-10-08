@@ -11,11 +11,14 @@ export default function Login() {
 
   function handleSubmit(event) {
     event.preventDefault()
+
     if (!user.trim() || !password.trim()) {
       setError('Informe usuário e senha para continuar.')
       return
     }
+
     setError('')
+    localStorage.setItem('petcare_user', user.trim())
     navigate('/dashboard')
   }
 

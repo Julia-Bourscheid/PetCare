@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [error, setError] = useState('')
   const [selectedAppointment, setSelectedAppointment] = useState(null)
   const [filter, setFilter] = useState('Todos')
+  const user = localStorage.getItem('petcare_user') || 'usuário'
 
   async function loadAppointments() {
     try {
@@ -63,7 +64,7 @@ export default function Dashboard() {
       <section className="welcome">
         <div>
           <p className="eyebrow">SEU PAINEL</p>
-          <h1>Bem-vinda de volta, Júlia! <span aria-hidden="true">🐾</span></h1>
+          <h1>Olá, {user}! <span aria-hidden="true">🐾</span></h1>
           <p>Acompanhe os cuidados e os próximos compromissos dos seus pets.</p>
         </div>
         <Link className="primary-button" to="/compromissos/novo"><Plus size={19} /> Novo compromisso</Link>
