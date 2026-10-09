@@ -1,15 +1,17 @@
+'use client'
+
 import { PawPrint, Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, type SubmitEvent } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Login() {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
 
-  function handleSubmit(event) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
 
     if (!user.trim() || !password.trim()) {
@@ -19,7 +21,7 @@ export default function Login() {
 
     setError('')
     localStorage.setItem('petcare_user', user.trim())
-    navigate('/dashboard')
+    router.push('/dashboard')
   }
 
   return (

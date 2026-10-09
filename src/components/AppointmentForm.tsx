@@ -1,11 +1,17 @@
-import { ArrowLeft, Save } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import AppShell from '../components/AppShell'
-import { pets } from '../data/pets'
-import { api } from '../services/api'
+'use client'
 
-const initial = {
+import { ArrowLeft, Save } from 'lucide-react'
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import AppShell from './AppShell'
+import { pets } from '../data/pets'
+import { api, errorMessage } from '../services/api'
+import type { AppointmentInput } from '../types'
+
+type FormErrors = Partial<Record<keyof AppointmentInput, string>>
+
+const initial: AppointmentInput = {
   title: '',
   pet: '',
   category: '',
@@ -14,33 +20,32 @@ const initial = {
   notes: ''
 }
 
-export default function AppointmentForm() {
-  const { id } = useParams()
-  const navigate = useNavigate()
+export default function AppointmentForm({ id }: { id?: string }) {
+  const router = useRouter()
   const editing = Boolean(id)
   const [form, setForm] = useState(initial)
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState('')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (!editing) return
+    if (!id) return
     api.getAppointments()
       .then(data => {
         const item = data.find(current => String(current.id) === String(id))
         if (item) setForm({ title: item.title || '', pet: item.pet || '', category: item.category || '', date: item.date || '', time: item.time || '', notes: item.notes || '', completed: item.completed })
       })
-      .catch(err => setApiError(err.message))
-  }, [editing, id])
+      .catch(err => setApiError(errorMessage(err)))
+  }, [id])
 
-  function change(event) {
+  function change(event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = event.target
     setForm(current => ({ ...current, [name]: value }))
     setErrors(current => ({ ...current, [name]: '' }))
   }
 
   function validate() {
-    const next = {}
+    const next: FormErrors = {}
     if (!form.title.trim()) next.title = 'Informe o nome do compromisso.'
     if (!form.pet) next.pet = 'Selecione um pet.'
     if (!form.category) next.category = 'Selecione uma categoria.'
@@ -51,21 +56,21 @@ export default function AppointmentForm() {
     return Object.keys(next).length === 0
   }
 
-  async function submit(event) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setApiError('')
     if (!validate()) return
 
     try {
       setSaving(true)
-      if (editing) {
+      if (id) {
         await api.updateAppointment(id, form)
       } else {
         await api.createAppointment(form)
       }
-      navigate('/dashboard')
+      router.push('/dashboard')
     } catch (err) {
-      setApiError(err.message)
+      setApiError(errorMessage(err))
     } finally {
       setSaving(false)
     }
@@ -73,7 +78,7 @@ export default function AppointmentForm() {
 
   return (
     <AppShell>
-      <Link className="back-link" to="/dashboard"><ArrowLeft size={18} /> Voltar para o painel</Link>
+      <Link className="back-link" href="/dashboard"><ArrowLeft size={18} /> Voltar para o painel</Link>
       <section className="form-card">
         <div className="form-header">
           <div>
@@ -128,13 +133,13 @@ export default function AppointmentForm() {
 
             <div className="field field-full">
               <label htmlFor="notes">Observações</label>
-              <textarea id="notes" name="notes" value={form.notes} onChange={change} rows="4" placeholder="Algum cuidado ou informação importante?" />
+              <textarea id="notes" name="notes" value={form.notes} onChange={change} rows={4} placeholder="Algum cuidado ou informação importante?" />
             </div>
           </div>
 
           <p className="required-note">* Campos obrigatórios</p>
           <div className="form-actions">
-            <Link className="secondary-button" to="/dashboard">Cancelar</Link>
+            <Link className="secondary-button" href="/dashboard">Cancelar</Link>
             <button className="primary-button" type="submit" disabled={saving}>
               <Save size={18} /> {saving ? 'Salvando...' : editing ? 'Salvar alterações' : 'Salvar compromisso'}
             </button>

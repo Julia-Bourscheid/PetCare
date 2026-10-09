@@ -1,34 +1,45 @@
-import { RefreshCw, Syringe } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import AppShell from '../components/AppShell'
-import AppointmentCard from '../components/AppointmentCard'
-import PetCard from '../components/PetCard'
-import SummaryCard from '../components/SummaryCard'
-import Modal from '../components/Modal'
-import { pets } from '../data/pets'
-import { api } from '../services/api'
+'use client'
+
+import { RefreshCw } from 'lucide-react'
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
+import { useRouter } from 'next/navigation'
+import AppShell from '@/components/AppShell'
+import AppointmentCard from '@/components/AppointmentCard'
+import PetCard from '@/components/PetCard'
+import SummaryCard from '@/components/SummaryCard'
+import Modal from '@/components/Modal'
+import { pets } from '@/data/pets'
+import { api, errorMessage } from '@/services/api'
+import type { Appointment } from '@/types'
+
+// localStorage só existe no navegador; no servidor a saudação usa o nome padrão.
+const subscribeToUser = () => () => {}
+const getUser = () => localStorage.getItem('petcare_user') || 'usuário'
+const getServerUser = () => 'usuário'
 
 export default function Dashboard() {
-  const navigate = useNavigate()
-  const [appointments, setAppointments] = useState([])
+  const router = useRouter()
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [filter, setFilter] = useState('Todos')
-  const user = localStorage.getItem('petcare_user') || 'usuário'
+  const user = useSyncExternalStore(subscribeToUser, getUser, getServerUser)
 
-  async function loadAppointments() {
-    try {
-      setLoading(true)
-      setError('')
-      const data = await api.getAppointments()
-      setAppointments(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+  function loadAppointments() {
+    return api.getAppointments()
+      .then(data => {
+        setAppointments(data)
+        setError('')
+      })
+      .catch(err => setError(errorMessage(err)))
+      .finally(() => setLoading(false))
+  }
+
+  function retry() {
+    setLoading(true)
+    setError('')
+    loadAppointments()
   }
 
   useEffect(() => {
@@ -40,22 +51,22 @@ export default function Dashboard() {
     return appointments.filter(item => item.category === filter)
   }, [appointments, filter])
 
-  async function remove(id) {
+  async function remove(id: number) {
     if (!window.confirm('Deseja realmente excluir este compromisso?')) return
     try {
       await api.deleteAppointment(id)
       setAppointments(current => current.filter(item => item.id !== id))
     } catch (err) {
-      setError(err.message)
+      setError(errorMessage(err))
     }
   }
 
-  async function toggleComplete(item) {
+  async function toggleComplete(item: Appointment) {
     try {
       const updated = await api.updateAppointment(item.id, { completed: !item.completed })
       setAppointments(current => current.map(currentItem => currentItem.id === item.id ? updated : currentItem))
     } catch (err) {
-      setError(err.message)
+      setError(errorMessage(err))
     }
   }
 
@@ -105,7 +116,7 @@ export default function Dashboard() {
         {error && (
           <div className="error-banner" role="alert">
             <span>{error}</span>
-            <button onClick={loadAppointments}><RefreshCw size={16} /> Tentar novamente</button>
+            <button onClick={retry}><RefreshCw size={16} /> Tentar novamente</button>
           </div>
         )}
 
@@ -119,7 +130,7 @@ export default function Dashboard() {
               <AppointmentCard
                 key={item.id}
                 appointment={item}
-                onEdit={() => navigate(`/compromissos/${item.id}/editar`)}
+                onEdit={() => router.push(`/compromissos/${item.id}/editar`)}
                 onDelete={remove}
                 onComplete={toggleComplete}
               />

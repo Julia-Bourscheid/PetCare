@@ -1,13 +1,21 @@
 import { CalendarDays, Check, Clock3, Pencil, Trash2 } from 'lucide-react'
+import type { Appointment } from '@/types'
 
-const categoryIcon = {
+const categoryIcon: Record<string, string> = {
   Alimentação: '🍽️',
   Rotina: '🌙',
   Higiene: '🛁',
   Saúde: '💉'
 }
 
-export default function AppointmentCard({ appointment, onEdit, onDelete, onComplete }) {
+interface AppointmentCardProps {
+  appointment: Appointment
+  onEdit: (appointment: Appointment) => void
+  onDelete: (id: number) => void
+  onComplete: (appointment: Appointment) => void
+}
+
+export default function AppointmentCard({ appointment, onEdit, onDelete, onComplete }: AppointmentCardProps) {
   return (
     <article className={`appointment-card ${appointment.completed ? 'completed' : ''}`}>
       <div className="appointment-icon" aria-hidden="true">
@@ -33,7 +41,7 @@ export default function AppointmentCard({ appointment, onEdit, onDelete, onCompl
   )
 }
 
-function formatDate(value) {
+function formatDate(value: string) {
   if (!value) return ''
   return new Date(`${value}T12:00:00`).toLocaleDateString('pt-BR')
 }

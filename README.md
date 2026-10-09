@@ -20,10 +20,10 @@ Aplicação responsiva para organização da rotina e dos cuidados de pets.
 ## Tecnologias
 
 - React
-- Vite
-- React Router
+- Next.js (App Router)
+- TypeScript
 - Lucide React
-- Vercel Serverless Function
+- Next.js Route Handlers (API)
 
 ## Executar localmente
 
@@ -32,7 +32,14 @@ npm install
 npm run dev
 ```
 
-> Para testar também a API `/api/appointments` localmente, use a Vercel CLI (`npx vercel dev`) ou publique o projeto na Vercel. O front-end foi preparado para consumir a função no mesmo domínio.
+Acesse `http://localhost:3000`. A API `/api/appointments` roda junto com o front-end, no mesmo servidor.
+
+Para testar o build de produção:
+
+```bash
+npm run build
+npm start
+```
 
 ## API
 
@@ -49,12 +56,19 @@ A API é propositalmente mockada/em memória, pois o enunciado permite retorno m
 
 ```text
 src/
+  app/
+    api/appointments/route.ts   # API REST (GET, POST, PUT, DELETE)
+    compromissos/novo/          # Novo compromisso
+    compromissos/[id]/editar/   # Editar compromisso
+    dashboard/                  # Painel
+    login/                      # Login
+    pets/[petId]/               # Perfil do pet
+    layout.tsx                  # Layout raiz (HTML, fonte, metadados)
+    globals.css
   components/
   data/
-  pages/
   services/
-api/
-  appointments.js
+  types.ts                      # Tipos compartilhados (Pet, Appointment)
 ```
 
 ## Apresentação

@@ -5,3 +5,10 @@ node_modules/
 
 pnpm-lock.yaml
 pnpm-workspace.yaml
+
+.next/
+out/
+next-env.d.ts
+
+.env
+*.tsbuildinfo
