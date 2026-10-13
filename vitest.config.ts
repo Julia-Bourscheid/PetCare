@@ -11,7 +11,7 @@ export default defineConfig({
     environment: "jsdom",
     // Configures path aliases to match your Next.js tsconfig paths (if using '@/*')
     alias: {
-      "@": path.resolve(__dirname, "./"),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });

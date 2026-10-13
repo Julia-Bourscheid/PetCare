@@ -4,14 +4,20 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { CalendarPlus, Home, LogOut, Menu, PawPrint, X } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import { api } from '@/services/api'
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
   const [open, setOpen] = useState(false)
 
-  function logout() {
-    router.push('/login')
+  async function logout() {
+    try {
+      await api.logout()
+    } finally {
+      localStorage.removeItem('petcare_user')
+      router.push('/login')
+    }
   }
 
   return (

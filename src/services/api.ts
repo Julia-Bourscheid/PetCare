@@ -1,4 +1,4 @@
-import type { Appointment, AppointmentInput } from "@/types";
+import type { Appointment, AppointmentInput, User } from "@/types";
 
 const DEFAULT_ERROR = "Não foi possível concluir a operação.";
 
@@ -37,6 +37,12 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
+  login: (email: string, password: string) =>
+    request<User>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }),
+  logout: () => request<null>("/api/auth/logout", { method: "POST" }),
   getAppointments: () => request<Appointment[]>("/api/appointments"),
   createAppointment: (data: AppointmentInput) =>
     request<Appointment>("/api/appointments", {
