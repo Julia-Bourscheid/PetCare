@@ -50,12 +50,12 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  updateAppointment: (id: number | string, data: Partial<AppointmentInput>) =>
+  updateAppointment: (id: string, data: Partial<AppointmentInput>) =>
     request<Appointment>(`/api/appointments?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
-  deleteAppointment: (id: number) =>
+  deleteAppointment: (id: string) =>
     request<null>(`/api/appointments?id=${id}`, {
       method: "DELETE",
     }),

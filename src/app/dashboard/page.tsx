@@ -52,7 +52,7 @@ export default function Dashboard() {
     return appointments.filter(item => item.category === filter)
   }, [appointments, filter])
 
-  async function remove(id: number) {
+  async function remove(id: string) {
     if (!window.confirm('Deseja realmente excluir este compromisso?')) return
     try {
       await api.deleteAppointment(id)

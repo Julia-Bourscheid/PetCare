@@ -1,5 +1,5 @@
 create table if not exists users (
-  id serial primary key,
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   email text not null unique,
   -- Hash scrypt no formato "<salt>:<hash>" (ver src/lib/password.ts).
@@ -8,13 +8,13 @@ create table if not exists users (
 
 create table if not exists sessions (
   token text primary key,
-  user_id integer not null references users (id) on delete cascade,
+  user_id uuid not null references users (id) on delete cascade,
   expires_at timestamptz not null
 );
 
 create table if not exists pets (
-  id serial primary key,
-  user_id integer not null references users (id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users (id) on delete cascade,
   name text not null,
   type text not null,
   breed text not null default '',
@@ -26,8 +26,8 @@ create table if not exists pets (
 );
 
 create table if not exists appointments (
-  id serial primary key,
-  pet_id integer not null references pets (id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
+  pet_id uuid not null references pets (id) on delete cascade,
   title text not null,
   category text not null,
   date date not null,

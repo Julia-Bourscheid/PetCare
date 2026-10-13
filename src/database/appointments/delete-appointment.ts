@@ -1,6 +1,6 @@
 import { pool } from "../db";
 
-export async function deleteAppointment(id: number, userId: number) {
+export async function deleteAppointment(id: string, userId: string) {
   const queryText = `
     DELETE FROM appointments a
     USING pets p

@@ -4,7 +4,7 @@ import { appointmentColumns } from "./columns";
 
 // Só insere se o pet pertence ao usuário; caso contrário retorna null.
 export async function insertAppointment(
-  userId: number,
+  userId: string,
   data: AppointmentInput,
 ): Promise<Appointment | null> {
   const queryText = `

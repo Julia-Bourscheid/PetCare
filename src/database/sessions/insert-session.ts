@@ -2,7 +2,7 @@ import { pool } from "../db";
 
 export async function insertSession(
   token: string,
-  userId: number,
+  userId: string,
   expiresAt: Date,
 ) {
   const queryText = `INSERT INTO sessions(token, user_id, expires_at) VALUES($1, $2, $3)`;

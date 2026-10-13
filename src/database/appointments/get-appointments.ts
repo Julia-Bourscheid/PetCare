@@ -2,7 +2,7 @@ import type { Appointment } from "@/types";
 import { pool } from "../db";
 import { appointmentColumns } from "./columns";
 
-export async function getAppointments(userId: number) {
+export async function getAppointments(userId: string) {
   const queryText = `
     SELECT ${appointmentColumns}
     FROM appointments a

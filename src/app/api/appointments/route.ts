@@ -5,6 +5,7 @@ import { getAppointments } from "@/database/appointments/get-appointments";
 import { insertAppointment } from "@/database/appointments/insert-appointment";
 import { updateAppointment } from "@/database/appointments/update-appointment";
 import { currentUser, unauthorized } from "@/lib/session";
+import { isUuid } from "@/lib/uuid";
 
 async function readBody(
   request: NextRequest,
@@ -17,7 +18,12 @@ async function readBody(
 }
 
 function getId(request: NextRequest) {
-  return Number(request.nextUrl.searchParams.get("id"));
+  const id = request.nextUrl.searchParams.get("id");
+  return isUuid(id) ? id : null;
+}
+
+function petNotFound() {
+  return Response.json({ message: "Pet não encontrado." }, { status: 404 });
 }
 
 export async function GET() {
@@ -32,14 +38,14 @@ export async function POST(request: NextRequest) {
   if (!user) return unauthorized();
 
   const body = await readBody(request);
-  const petId = Number(body.petId);
-  const { title, category, date, time } = body;
+  const { petId, title, category, date, time } = body;
   if (!title || !petId || !category || !date || !time) {
     return Response.json(
       { message: "Preencha todos os campos obrigatórios." },
       { status: 400 },
     );
   }
+  if (!isUuid(petId)) return petNotFound();
 
   const item = await insertAppointment(user.id, {
     petId,
@@ -49,8 +55,7 @@ export async function POST(request: NextRequest) {
     time,
     notes: body.notes ?? "",
   });
-  if (!item)
-    return Response.json({ message: "Pet não encontrado." }, { status: 404 });
+  if (!item) return petNotFound();
   return Response.json(item, { status: 201 });
 }
 
@@ -62,7 +67,10 @@ export async function PUT(request: NextRequest) {
   if (!id)
     return Response.json({ message: "Informe um id válido." }, { status: 400 });
 
-  const item = await updateAppointment(id, user.id, await readBody(request));
+  const body = await readBody(request);
+  if (body.petId !== undefined && !isUuid(body.petId)) return petNotFound();
+
+  const item = await updateAppointment(id, user.id, body);
   if (!item)
     return Response.json(
       { message: "Compromisso não encontrado." },

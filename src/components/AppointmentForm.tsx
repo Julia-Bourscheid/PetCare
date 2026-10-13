@@ -12,7 +12,7 @@ type FormErrors = Partial<Record<keyof AppointmentInput, string>>
 
 const initial: AppointmentInput = {
   title: '',
-  petId: 0,
+  petId: '',
   category: '',
   date: '',
   time: '',
@@ -46,7 +46,7 @@ export default function AppointmentForm({ id }: { id?: string }) {
 
   function change(event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = event.target
-    setForm(current => ({ ...current, [name]: name === 'petId' ? Number(value) : value }))
+    setForm(current => ({ ...current, [name]: value }))
     setErrors(current => ({ ...current, [name]: '' }))
   }
 
@@ -106,7 +106,7 @@ export default function AppointmentForm({ id }: { id?: string }) {
 
             <div className="field">
               <label htmlFor="petId">Pet <span>*</span></label>
-              <select id="petId" name="petId" value={form.petId || ''} onChange={change} aria-invalid={Boolean(errors.petId)}>
+              <select id="petId" name="petId" value={form.petId} onChange={change} aria-invalid={Boolean(errors.petId)}>
                 <option value="">Selecione</option>
                 {pets.map(pet => <option key={pet.id} value={pet.id}>{pet.icon} {pet.name}</option>)}
               </select>

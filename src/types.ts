@@ -1,11 +1,11 @@
 export interface User {
-  id: number
+  id: string
   name: string
   email: string
 }
 
 export interface Pet {
-  id: number
+  id: string
   name: string
   type: string
   age: string
@@ -17,8 +17,8 @@ export interface Pet {
 }
 
 export interface Appointment {
-  id: number
-  petId: number
+  id: string
+  petId: string
   pet: string
   title: string
   category: string

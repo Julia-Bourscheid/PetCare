@@ -7,7 +7,7 @@ import { SESSION_COOKIE } from "./session-cookie";
 
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 
-export async function startSession(userId: number) {
+export async function startSession(userId: string) {
   const token = randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
   await insertSession(token, userId, expiresAt);

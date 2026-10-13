@@ -5,8 +5,8 @@ import { appointmentColumns } from "./columns";
 // Atualiza só os campos enviados. Retorna null se o compromisso (ou o novo
 // pet) não pertence ao usuário.
 export async function updateAppointment(
-  id: number,
-  userId: number,
+  id: string,
+  userId: string,
   data: Partial<AppointmentInput>,
 ): Promise<Appointment | null> {
   const queryText = `
@@ -23,7 +23,7 @@ export async function updateAppointment(
       WHERE a.id = $1
         AND owner.id = a.pet_id
         AND owner.user_id = $2
-        AND ($3::int IS NULL OR EXISTS (
+        AND ($3::uuid IS NULL OR EXISTS (
           SELECT 1 FROM pets WHERE id = $3 AND user_id = $2
         ))
       RETURNING a.*

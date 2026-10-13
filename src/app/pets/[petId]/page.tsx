@@ -4,13 +4,14 @@ import { redirect } from 'next/navigation'
 import AppShell from '@/components/AppShell'
 import { getPet } from '@/database/pets/get-pet'
 import { currentUser } from '@/lib/session'
+import { isUuid } from '@/lib/uuid'
 
 export default async function PetProfile({ params }: PageProps<'/pets/[petId]'>) {
   const user = await currentUser()
   if (!user) redirect('/login')
 
-  const id = Number((await params).petId)
-  const pet = Number.isInteger(id) ? await getPet(id, user.id) : null
+  const { petId } = await params
+  const pet = isUuid(petId) ? await getPet(petId, user.id) : null
 
   if (!pet) {
     return (
