@@ -1,3 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-xs: 26.25rem;
+
+  --color-primary: #6a8f80;
+  --color-primary-dark: #4f7264;
+  --color-primary-light: #e6f0ec;
+  --color-ink: #263238;
+  --color-muted: #6f7d79;
+  --color-line: #dfe8e4;
+  --color-danger: #b94a48;
+  --color-page: #f7faf9;
+  --color-sand: #f4eee3;
+  --color-cream: #f8f0df;
+}
+
+@theme inline {
+  --font-sans: var(--font-nunito), system-ui, sans-serif;
+}
+
+@layer base {
+  h1 {
+    @apply mb-[7px] text-[clamp(1.8rem,4vw,2.55rem)] leading-[1.15] font-bold;
+  }
+
+  h2 {
+    @apply mb-1 text-[1.35rem] font-bold;
+  }
+
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+/* CSS antigo, convertido para utilitários aos poucos. */
+@layer components {
+p { margin-bottom: 1em; }
+
 :root {
   font-family: var(--font-nunito), system-ui, sans-serif;
   color: #263238;
@@ -165,4 +204,5 @@ textarea { resize: vertical; }
   .login-card { padding: 27px 20px; }
   .profile-card, .form-card { padding: 20px 17px; }
   .pet-card { padding: 12px; }
+}
 }

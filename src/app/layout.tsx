@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="pt-BR" className={nunito.variable}>
-      <body>{children}</body>
+      <body className="min-w-80 bg-page font-sans text-ink">{children}</body>
     </html>
   )
 }
