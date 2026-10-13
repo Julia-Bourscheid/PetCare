@@ -5,6 +5,7 @@ import { useEffect, useState, type ChangeEvent, type SubmitEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AppShell from './AppShell'
+import { backLink, card, errorBanner, eyebrow, fieldError, fieldInput, fieldLabel, primaryButton, secondaryButton } from './ui'
 import { api, errorMessage } from '../services/api'
 import type { AppointmentInput, Pet } from '../types'
 
@@ -84,69 +85,67 @@ export default function AppointmentForm({ id }: { id?: string }) {
 
   return (
     <AppShell>
-      <Link className="back-link" href="/dashboard"><ArrowLeft size={18} /> Voltar para o painel</Link>
-      <section className="form-card">
-        <div className="form-header">
-          <div>
-            <p className="eyebrow">{editing ? 'EDITAR' : 'NOVO'}</p>
-            <h1>{editing ? 'Editar compromisso' : 'Novo compromisso'}</h1>
-            <p>Preencha os dados para organizar a rotina do seu pet.</p>
-          </div>
+      <Link className={backLink} href="/dashboard"><ArrowLeft size={18} /> Voltar para o painel</Link>
+      <section className={`${card} mx-auto max-w-[850px]`}>
+        <div className="mb-[25px]">
+          <p className={eyebrow}>{editing ? 'EDITAR' : 'NOVO'}</p>
+          <h1>{editing ? 'Editar compromisso' : 'Novo compromisso'}</h1>
+          <p className="text-muted">Preencha os dados para organizar a rotina do seu pet.</p>
         </div>
 
-        {apiError && <div className="error-banner" role="alert">{apiError}</div>}
+        {apiError && <div className={errorBanner} role="alert">{apiError}</div>}
 
         <form onSubmit={submit} noValidate>
-          <div className="form-grid">
-            <div className="field field-full">
-              <label htmlFor="title">Nome do compromisso <span>*</span></label>
-              <input id="title" name="title" value={form.title} onChange={change} aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'title-error' : undefined} placeholder="Ex.: Banho do Thor" />
-              {errors.title && <small id="title-error" className="field-error">{errors.title}</small>}
+          <div className="grid grid-cols-1 gap-[18px] md:grid-cols-2">
+            <div className="min-w-0 md:col-span-2">
+              <label className={fieldLabel} htmlFor="title">Nome do compromisso <span className="text-danger">*</span></label>
+              <input className={fieldInput} id="title" name="title" value={form.title} onChange={change} aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'title-error' : undefined} placeholder="Ex.: Banho do Thor" />
+              {errors.title && <small id="title-error" className={fieldError}>{errors.title}</small>}
             </div>
 
-            <div className="field">
-              <label htmlFor="petId">Pet <span>*</span></label>
-              <select id="petId" name="petId" value={form.petId} onChange={change} aria-invalid={Boolean(errors.petId)}>
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="petId">Pet <span className="text-danger">*</span></label>
+              <select className={fieldInput} id="petId" name="petId" value={form.petId} onChange={change} aria-invalid={Boolean(errors.petId)}>
                 <option value="">Selecione</option>
                 {pets.map(pet => <option key={pet.id} value={pet.id}>{pet.icon} {pet.name}</option>)}
               </select>
-              {errors.petId && <small className="field-error">{errors.petId}</small>}
+              {errors.petId && <small className={fieldError}>{errors.petId}</small>}
             </div>
 
-            <div className="field">
-              <label htmlFor="category">Categoria <span>*</span></label>
-              <select id="category" name="category" value={form.category} onChange={change} aria-invalid={Boolean(errors.category)}>
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="category">Categoria <span className="text-danger">*</span></label>
+              <select className={fieldInput} id="category" name="category" value={form.category} onChange={change} aria-invalid={Boolean(errors.category)}>
                 <option value="">Selecione</option>
                 <option>Alimentação</option>
                 <option>Rotina</option>
                 <option>Higiene</option>
                 <option>Saúde</option>
               </select>
-              {errors.category && <small className="field-error">{errors.category}</small>}
+              {errors.category && <small className={fieldError}>{errors.category}</small>}
             </div>
 
-            <div className="field">
-              <label htmlFor="date">Data <span>*</span></label>
-              <input id="date" name="date" type="date" value={form.date} onChange={change} aria-invalid={Boolean(errors.date)} />
-              {errors.date && <small className="field-error">{errors.date}</small>}
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="date">Data <span className="text-danger">*</span></label>
+              <input className={fieldInput} id="date" name="date" type="date" value={form.date} onChange={change} aria-invalid={Boolean(errors.date)} />
+              {errors.date && <small className={fieldError}>{errors.date}</small>}
             </div>
 
-            <div className="field">
-              <label htmlFor="time">Horário <span>*</span></label>
-              <input id="time" name="time" type="time" value={form.time} onChange={change} aria-invalid={Boolean(errors.time)} />
-              {errors.time && <small className="field-error">{errors.time}</small>}
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="time">Horário <span className="text-danger">*</span></label>
+              <input className={fieldInput} id="time" name="time" type="time" value={form.time} onChange={change} aria-invalid={Boolean(errors.time)} />
+              {errors.time && <small className={fieldError}>{errors.time}</small>}
             </div>
 
-            <div className="field field-full">
-              <label htmlFor="notes">Observações</label>
-              <textarea id="notes" name="notes" value={form.notes} onChange={change} rows={4} placeholder="Algum cuidado ou informação importante?" />
+            <div className="min-w-0 md:col-span-2">
+              <label className={fieldLabel} htmlFor="notes">Observações</label>
+              <textarea className={`${fieldInput} resize-y`} id="notes" name="notes" value={form.notes} onChange={change} rows={4} placeholder="Algum cuidado ou informação importante?" />
             </div>
           </div>
 
-          <p className="required-note">* Campos obrigatórios</p>
-          <div className="form-actions">
-            <Link className="secondary-button" href="/dashboard">Cancelar</Link>
-            <button className="primary-button" type="submit" disabled={saving}>
+          <p className="my-[17px] text-[.85rem] text-muted">* Campos obrigatórios</p>
+          <div className="flex flex-col-reverse gap-[9px] border-t border-line pt-5 md:flex-row md:justify-end">
+            <Link className={`${secondaryButton} w-full md:w-auto`} href="/dashboard">Cancelar</Link>
+            <button className={`${primaryButton} w-full md:w-auto`} type="submit" disabled={saving}>
               <Save size={18} /> {saving ? 'Salvando...' : editing ? 'Salvar alterações' : 'Salvar compromisso'}
             </button>
           </div>
