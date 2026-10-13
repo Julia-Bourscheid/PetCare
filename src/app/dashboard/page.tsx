@@ -8,8 +8,11 @@ import AppointmentCard from '@/components/AppointmentCard'
 import PetCard from '@/components/PetCard'
 import SummaryCard from '@/components/SummaryCard'
 import Modal from '@/components/Modal'
+import { errorBanner, eyebrow } from '@/components/ui'
 import { api, errorMessage } from '@/services/api'
 import type { Appointment, Pet } from '@/types'
+
+const placeholder = 'rounded-[14px] border border-dashed border-line bg-white p-[35px] text-center text-muted'
 
 // localStorage só existe no navegador; no servidor a saudação usa o nome padrão.
 const subscribeToUser = () => () => {}
@@ -73,41 +76,43 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <section className="welcome">
+      <section className="mb-7 flex flex-col items-stretch gap-[18px] md:flex-row md:items-end md:justify-between md:gap-[30px]">
         <div>
-          <p className="eyebrow">SEU PAINEL</p>
+          <p className={eyebrow}>SEU PAINEL</p>
           <h1>Olá, {user}! <span aria-hidden="true">🐾</span></h1>
-          <p>Acompanhe os cuidados e os próximos compromissos dos seus pets.</p>
+          <p className="text-muted">Acompanhe os cuidados e os próximos compromissos dos seus pets.</p>
         </div>
       </section>
 
-      <section className="summary-grid" aria-label="Resumo">
+      <section className="mb-[38px] grid grid-cols-1 gap-[15px] md:grid-cols-3" aria-label="Resumo">
         <SummaryCard icon="🐾" value={pets.length} label="Pets cadastrados" />
         <SummaryCard icon="💉" value="1" label="Vacina pendente" detail="Próxima: 15/10" />
         <SummaryCard icon="🍽️" value={appointments.filter(a => a.category === 'Alimentação').length} label="Refeições" detail="Hoje" />
       </section>
 
-      <section className="section-block">
-        <div className="section-heading">
-          <div>
-            <h2>Seus pets</h2>
-            <p>Selecione um pet para ver seus detalhes.</p>
-          </div>
+      <section className="mt-[38px]">
+        <div className="mb-4">
+          <h2>Seus pets</h2>
+          <p className="text-muted">Selecione um pet para ver seus detalhes.</p>
         </div>
-        <div className="pets-grid">
+        <div className="grid grid-cols-1 gap-[15px] md:grid-cols-3">
           {pets.map(pet => <PetCard key={pet.id} pet={pet} />)}
         </div>
       </section>
 
-      <section className="section-block">
-        <div className="section-heading appointment-heading">
+      <section className="mt-[38px]">
+        <div className="mb-4 flex flex-col items-stretch gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <h2>Próximos compromissos</h2>
-            <p>Organize a rotina dos seus pets.</p>
+            <p className="text-muted">Organize a rotina dos seus pets.</p>
           </div>
-          <div className="filter-group" aria-label="Filtrar compromissos">
+          <div className="flex flex-wrap justify-start gap-[5px] md:justify-end" aria-label="Filtrar compromissos">
             {['Todos', 'Alimentação', 'Rotina', 'Higiene', 'Saúde'].map(option => (
-              <button key={option} className={filter === option ? 'filter active' : 'filter'} onClick={() => setFilter(option)}>
+              <button
+                key={option}
+                className={`rounded-[9px] border px-2.5 py-[7px] text-[.8rem] font-bold ${filter === option ? 'border-[#bfd2c9] bg-primary-light text-primary-dark' : 'border-line bg-white text-muted hover:border-[#bfd2c9] hover:bg-primary-light hover:text-primary-dark'}`}
+                onClick={() => setFilter(option)}
+              >
                 {option}
               </button>
             ))}
@@ -115,18 +120,18 @@ export default function Dashboard() {
         </div>
 
         {error && (
-          <div className="error-banner" role="alert">
+          <div className={errorBanner} role="alert">
             <span>{error}</span>
-            <button onClick={retry}><RefreshCw size={16} /> Tentar novamente</button>
+            <button className="inline-flex items-center gap-1.5 font-extrabold" onClick={retry}><RefreshCw size={16} /> Tentar novamente</button>
           </div>
         )}
 
         {loading ? (
-          <div className="loading">Carregando compromissos...</div>
+          <div className={placeholder}>Carregando compromissos...</div>
         ) : filtered.length === 0 ? (
-          <div className="empty-state">Nenhum compromisso encontrado para este filtro.</div>
+          <div className={placeholder}>Nenhum compromisso encontrado para este filtro.</div>
         ) : (
-          <div className="appointments-list">
+          <div className="grid gap-2.5">
             {filtered.map(item => (
               <AppointmentCard
                 key={item.id}
