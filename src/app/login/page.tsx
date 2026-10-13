@@ -55,7 +55,7 @@ export default function Login() {
           {error && <p className={`${fieldError} mb-4`} role="alert">{error}</p>}
           <button className={`${primaryButton} mt-2.5 w-full`} type="submit" disabled={loading}>{loading ? 'Entrando...' : 'Entrar'}</button>
         </form>
-        <p className="mt-[18px] text-center text-xs text-[#8a9793]">Conta de demonstração: demo@petcare.com · senha petcare123</p>
+        <p className="mt-[18px] text-center text-xs text-muted">Conta de demonstração: demo@petcare.com · senha petcare123</p>
       </section>
     </main>
   )

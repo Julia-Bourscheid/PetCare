@@ -14,7 +14,7 @@ export const backLink =
 export const fieldLabel = 'mb-[7px] block font-extrabold'
 
 export const fieldInput =
-  'w-full rounded-[10px] border border-[#cfdcd7] bg-white px-[13px] py-3 text-ink outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(106,143,128,.13)] aria-[invalid=true]:border-danger'
+  'w-full rounded-[10px] border border-[#cfdcd7] bg-white px-[13px] py-3 text-ink outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(88,123,109,.13)] aria-[invalid=true]:border-danger'
 
 export const fieldError = 'mt-[5px] block text-[.82rem] font-bold text-danger'
 
