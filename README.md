@@ -22,17 +22,26 @@ Aplicação responsiva para organização da rotina e dos cuidados de pets.
 - React
 - Next.js (App Router)
 - TypeScript
+- Tailwind CSS
 - Lucide React
 - Next.js Route Handlers (API)
+- PostgreSQL (Supabase) com `pg`
 
 ## Executar localmente
 
+1. Copie `.env.example` para `.env` e preencha `DATABASE_URI` com a URL do
+   **Session pooler** do Supabase (Connect > Session pooler). A conexão direta
+   `db.<project-ref>.supabase.co` só tem IPv6 e não funciona em redes sem IPv6
+   nem na Vercel.
+2. Instale as dependências e crie as tabelas com os dados de demonstração:
+
 ```bash
 npm install
+npm run db:setup
 npm run dev
 ```
 
-Acesse `http://localhost:3000`. A API `/api/appointments` roda junto com o front-end, no mesmo servidor.
+Acesse `http://localhost:3000` e entre com `demo@petcare.com` / `petcare123`. A API `/api/appointments` roda junto com o front-end, no mesmo servidor.
 
 Para testar o build de produção:
 
@@ -45,12 +54,18 @@ npm start
 
 | Método | Endpoint | Função |
 |---|---|---|
+| POST | `/api/auth/login` | Faz login e cria a sessão |
+| POST | `/api/auth/logout` | Encerra a sessão |
+| GET | `/api/pets` | Lista os pets do usuário |
 | GET | `/api/appointments` | Lista compromissos |
 | POST | `/api/appointments` | Cria compromisso |
 | PUT | `/api/appointments?id=ID` | Edita compromisso |
 | DELETE | `/api/appointments?id=ID` | Exclui compromisso |
 
-A API é propositalmente mockada/em memória, pois o enunciado permite retorno mockado e não exige banco de dados.
+As rotas de pets e compromissos exigem login e só acessam os dados do
+usuário da sessão. As tabelas (`users`, `sessions`, `pets`, `appointments`) usam
+`uuid` como chave e estão em `src/database/schema.sql`; as senhas são salvas
+com hash scrypt.
 
 ## Estrutura
 
@@ -58,6 +73,8 @@ A API é propositalmente mockada/em memória, pois o enunciado permite retorno m
 src/
   app/
     api/appointments/route.ts   # API REST (GET, POST, PUT, DELETE)
+    api/auth/                   # Login e logout
+    api/pets/route.ts           # Pets do usuário
     compromissos/novo/          # Novo compromisso
     compromissos/[id]/editar/   # Editar compromisso
     dashboard/                  # Painel
@@ -66,9 +83,12 @@ src/
     layout.tsx                  # Layout raiz (HTML, fonte, metadados)
     globals.css
   components/
-  data/
-  services/
-  types.ts                      # Tipos compartilhados (Pet, Appointment)
+    ui.ts                       # Classes Tailwind compartilhadas
+  database/                     # Conexão, schema, seed e consultas SQL
+  lib/                          # Senha, sessão e validação de uuid
+  services/                     # Cliente da API usado pelas telas
+  proxy.ts                      # Redireciona para /login sem sessão
+  types.ts                      # Tipos compartilhados (User, Pet, Appointment)
 ```
 
 ## Apresentação
