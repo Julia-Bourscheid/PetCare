@@ -1,4 +1,4 @@
-import { CalendarDays, Check, Clock3, Pencil, Trash2 } from 'lucide-react'
+import { CalendarDays, Check, Clock3, Eye, Pencil, Trash2 } from 'lucide-react'
 import type { Appointment } from '@/types'
 
 const categoryIcon: Record<string, string> = {
@@ -15,7 +15,7 @@ interface AppointmentCardProps {
   onComplete: (appointment: Appointment) => void
 }
 
-export default function AppointmentCard({ appointment, onEdit, onDelete, onComplete }: AppointmentCardProps) {
+export default function AppointmentCard({ appointment, onView, onEdit, onDelete, onComplete }: AppointmentCardProps) {
   return (
     <article className={`appointment-card ${appointment.completed ? 'completed' : ''}`}>
       <div className="appointment-icon" aria-hidden="true">
@@ -27,6 +27,9 @@ export default function AppointmentCard({ appointment, onEdit, onDelete, onCompl
         <small><CalendarDays size={14} aria-hidden="true" /> {formatDate(appointment.date)} <Clock3 size={14} aria-hidden="true" /> {appointment.time}</small>
       </div>
       <div className="appointment-actions">
+        <button onClick={() => onView(appointment)} aria-label={`Ver detalhes de ${appointment.title}`} title="Ver detalhes">
+          <Eye size={17} />
+        </button>
         <button onClick={() => onComplete(appointment)} aria-label={appointment.completed ? 'Marcar como pendente' : 'Marcar como concluído'} title={appointment.completed ? 'Marcar como pendente' : 'Concluir'}>
           <Check size={17} />
         </button>
@@ -41,7 +44,7 @@ export default function AppointmentCard({ appointment, onEdit, onDelete, onCompl
   )
 }
 
-function formatDate(value: string) {
+export function formatDate(value: string) {
   if (!value) return ''
   return new Date(`${value}T12:00:00`).toLocaleDateString('pt-BR')
 }

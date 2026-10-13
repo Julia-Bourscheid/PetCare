@@ -139,6 +139,10 @@ textarea { resize: vertical; }
 .modal-header button { display: grid; place-items: center; width: 34px; height: 34px; border: 0; background: transparent; border-radius: 8px; color: var(--muted); }
 .modal-header button:hover { background: var(--primary-light); }
 .modal-body { padding: 20px; }
+.details-list { display: grid; grid-template-columns: auto 1fr; gap: 10px 18px; margin: 0; }
+.details-list dt { color: var(--muted); font-weight: 700; }
+.details-list dd { margin: 0; }
+
 
 @media (max-width: 760px) {
   .topbar { padding: 12px 18px; }
