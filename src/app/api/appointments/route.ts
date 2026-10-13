@@ -1,37 +1,14 @@
 import type { NextRequest } from "next/server";
-import type { Appointment } from "@/types";
+import type { AppointmentInput } from "@/types";
+import { deleteAppointment } from "@/database/appointments/delete-appointment";
+import { getAppointments } from "@/database/appointments/get-appointments";
+import { insertAppointment } from "@/database/appointments/insert-appointment";
+import { updateAppointment } from "@/database/appointments/update-appointment";
+import { currentUser, unauthorized } from "@/lib/session";
 
-let appointments: Appointment[] = [
-  {
-    id: 1,
-    pet: "Mimi",
-    title: "Jantar da Mimi",
-    category: "Alimentação",
-    date: "2026-10-08",
-    time: "19:00",
-    notes: "Ração e água.",
-  },
-  {
-    id: 2,
-    pet: "Nina",
-    title: "Ninar a Nina",
-    category: "Rotina",
-    date: "2026-10-08",
-    time: "20:00",
-    notes: "",
-  },
-  {
-    id: 3,
-    pet: "Thor",
-    title: "Banho do Thor",
-    category: "Higiene",
-    date: "2026-10-09",
-    time: "21:00",
-    notes: "Usar shampoo neutro.",
-  },
-];
-
-async function readBody(request: NextRequest): Promise<Partial<Appointment>> {
+async function readBody(
+  request: NextRequest,
+): Promise<Partial<AppointmentInput>> {
   try {
     return await request.json();
   } catch {
@@ -43,63 +20,69 @@ function getId(request: NextRequest) {
   return Number(request.nextUrl.searchParams.get("id"));
 }
 
-export function GET() {
-  return Response.json(appointments);
+export async function GET() {
+  const user = await currentUser();
+  if (!user) return unauthorized();
+
+  return Response.json(await getAppointments(user.id));
 }
 
 export async function POST(request: NextRequest) {
+  const user = await currentUser();
+  if (!user) return unauthorized();
+
   const body = await readBody(request);
-  const { title, pet, category, date, time } = body;
-  if (!title || !pet || !category || !date || !time) {
+  const petId = Number(body.petId);
+  const { title, category, date, time } = body;
+  if (!title || !petId || !category || !date || !time) {
     return Response.json(
       { message: "Preencha todos os campos obrigatórios." },
       { status: 400 },
     );
   }
-  const item: Appointment = {
-    notes: "",
-    ...body,
-    id: Date.now(),
+
+  const item = await insertAppointment(user.id, {
+    petId,
     title,
-    pet,
     category,
     date,
     time,
-  };
-  appointments.push(item);
+    notes: body.notes ?? "",
+  });
+  if (!item)
+    return Response.json({ message: "Pet não encontrado." }, { status: 404 });
   return Response.json(item, { status: 201 });
 }
 
 export async function PUT(request: NextRequest) {
+  const user = await currentUser();
+  if (!user) return unauthorized();
+
   const id = getId(request);
   if (!id)
     return Response.json({ message: "Informe um id válido." }, { status: 400 });
 
-  const index = appointments.findIndex((item) => item.id === id);
-  if (index === -1)
+  const item = await updateAppointment(id, user.id, await readBody(request));
+  if (!item)
     return Response.json(
       { message: "Compromisso não encontrado." },
       { status: 404 },
     );
-  appointments[index] = {
-    ...appointments[index],
-    ...(await readBody(request)),
-    id,
-  };
-  return Response.json(appointments[index]);
+  return Response.json(item);
 }
 
-export function DELETE(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
+  const user = await currentUser();
+  if (!user) return unauthorized();
+
   const id = getId(request);
   if (!id)
     return Response.json({ message: "Informe um id válido." }, { status: 400 });
 
-  const exists = appointments.some((item) => item.id === id);
-  if (!exists)
+  if (!(await deleteAppointment(id, user.id)))
     return Response.json(
       { message: "Compromisso não encontrado." },
       { status: 404 },
     );
-  appointments = appointments.filter((item) => item.id !== id);
   return new Response(null, { status: 204 });
 }

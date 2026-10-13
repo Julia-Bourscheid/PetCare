@@ -12,7 +12,7 @@ type FormErrors = Partial<Record<keyof AppointmentInput, string>>
 
 const initial: AppointmentInput = {
   title: '',
-  pet: '',
+  petId: 0,
   category: '',
   date: '',
   time: '',
@@ -39,21 +39,21 @@ export default function AppointmentForm({ id }: { id?: string }) {
     api.getAppointments()
       .then(data => {
         const item = data.find(current => String(current.id) === String(id))
-        if (item) setForm({ title: item.title || '', pet: item.pet || '', category: item.category || '', date: item.date || '', time: item.time || '', notes: item.notes || '', completed: item.completed })
+        if (item) setForm({ title: item.title || '', petId: item.petId, category: item.category || '', date: item.date || '', time: item.time || '', notes: item.notes || '', completed: item.completed })
       })
       .catch(err => setApiError(errorMessage(err)))
   }, [id])
 
   function change(event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = event.target
-    setForm(current => ({ ...current, [name]: value }))
+    setForm(current => ({ ...current, [name]: name === 'petId' ? Number(value) : value }))
     setErrors(current => ({ ...current, [name]: '' }))
   }
 
   function validate() {
     const next: FormErrors = {}
     if (!form.title.trim()) next.title = 'Informe o nome do compromisso.'
-    if (!form.pet) next.pet = 'Selecione um pet.'
+    if (!form.petId) next.petId = 'Selecione um pet.'
     if (!form.category) next.category = 'Selecione uma categoria.'
     if (!form.date) next.date = 'Informe a data.'
     if (!form.time) next.time = 'Informe o horário.'
@@ -105,12 +105,12 @@ export default function AppointmentForm({ id }: { id?: string }) {
             </div>
 
             <div className="field">
-              <label htmlFor="pet">Pet <span>*</span></label>
-              <select id="pet" name="pet" value={form.pet} onChange={change} aria-invalid={Boolean(errors.pet)}>
+              <label htmlFor="petId">Pet <span>*</span></label>
+              <select id="petId" name="petId" value={form.petId || ''} onChange={change} aria-invalid={Boolean(errors.petId)}>
                 <option value="">Selecione</option>
-                {pets.map(pet => <option key={pet.id} value={pet.name}>{pet.icon} {pet.name}</option>)}
+                {pets.map(pet => <option key={pet.id} value={pet.id}>{pet.icon} {pet.name}</option>)}
               </select>
-              {errors.pet && <small className="field-error">{errors.pet}</small>}
+              {errors.petId && <small className="field-error">{errors.petId}</small>}
             </div>
 
             <div className="field">

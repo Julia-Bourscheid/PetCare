@@ -1,9 +1,13 @@
 import type { User } from "@/types";
 import { pool } from "../db";
 
-export async function getUserByEmail(email: string) {
+type UserWithPassword = User & { password: string };
+
+export async function getUserByEmail(
+  email: string,
+): Promise<UserWithPassword | null> {
   const queryText = `SELECT id, name, email, password FROM users WHERE lower(email) = lower($1)`;
 
-  const res = await pool.query<User & { password: string }>(queryText, [email]);
+  const res = await pool.query<UserWithPassword>(queryText, [email]);
   return res.rows[0] ?? null;
 }

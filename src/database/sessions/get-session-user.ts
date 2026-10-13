@@ -1,7 +1,7 @@
 import type { User } from "@/types";
 import { pool } from "../db";
 
-export async function getSessionUser(token: string) {
+export async function getSessionUser(token: string): Promise<User | null> {
   const queryText = `
     SELECT u.id, u.name, u.email
     FROM sessions s

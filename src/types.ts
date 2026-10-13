@@ -18,6 +18,7 @@ export interface Pet {
 
 export interface Appointment {
   id: number
+  petId: number
   pet: string
   title: string
   category: string
@@ -27,4 +28,4 @@ export interface Appointment {
   completed?: boolean
 }
 
-export type AppointmentInput = Omit<Appointment, 'id'>
+export type AppointmentInput = Omit<Appointment, 'id' | 'pet'>
