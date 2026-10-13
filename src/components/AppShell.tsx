@@ -39,10 +39,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </button>
 
         <nav className={`${open ? 'flex' : 'hidden'} absolute inset-x-3 top-[68px] flex-col gap-2 rounded-[14px] border border-line bg-white p-[9px] shadow-[0_12px_30px_rgba(0,0,0,.1)] md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0 md:shadow-none`} aria-label="Navegação principal">
-          <Link className={navLink(pathname === '/dashboard')} href="/dashboard" onClick={() => setOpen(false)}>
+          <Link className={navLink(pathname === '/dashboard')} aria-current={pathname === '/dashboard' ? 'page' : undefined} href="/dashboard" onClick={() => setOpen(false)}>
             <Home size={18} aria-hidden="true" /> Início
           </Link>
-          <Link className={navLink(pathname.includes('/compromissos'))} href="/compromissos/novo" onClick={() => setOpen(false)}>
+          <Link className={navLink(pathname.includes('/compromissos'))} aria-current={pathname.includes('/compromissos') ? 'page' : undefined} href="/compromissos/novo" onClick={() => setOpen(false)}>
             <CalendarPlus size={18} aria-hidden="true" /> Novo compromisso
           </Link>
           <button className={`${navItem} text-muted hover:bg-[#f8eceb] hover:text-danger`} onClick={logout}>

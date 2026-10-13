@@ -111,6 +111,7 @@ export default function Dashboard() {
               <button
                 key={option}
                 className={`rounded-[9px] border px-2.5 py-[7px] text-[.8rem] font-bold ${filter === option ? 'border-[#bfd2c9] bg-primary-light text-primary-dark' : 'border-line bg-white text-muted hover:border-[#bfd2c9] hover:bg-primary-light hover:text-primary-dark'}`}
+                aria-pressed={filter === option}
                 onClick={() => setFilter(option)}
               >
                 {option}
