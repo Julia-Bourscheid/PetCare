@@ -10,6 +10,7 @@ const categoryIcon: Record<string, string> = {
 
 interface AppointmentCardProps {
   appointment: Appointment
+  onView: (appointment: Appointment) => void
   onEdit: (appointment: Appointment) => void
   onDelete: (id: number) => void
   onComplete: (appointment: Appointment) => void

@@ -140,7 +140,7 @@ export default function Dashboard() {
         )}
       </section>
 
-            <Modal open={Boolean(selectedAppointment)} title="Detalhes do compromisso" onClose={() => setSelectedAppointment(null)}>
+      <Modal open={Boolean(selectedAppointment)} title="Detalhes do compromisso" onClose={() => setSelectedAppointment(null)}>
         {selectedAppointment && (
           <dl className="details-list">
             <dt>Compromisso</dt><dd>{selectedAppointment.title}</dd>
@@ -153,7 +153,6 @@ export default function Dashboard() {
           </dl>
         )}
       </Modal>
-
     </AppShell>
   )
 }
