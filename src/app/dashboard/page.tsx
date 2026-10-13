@@ -4,7 +4,7 @@ import { RefreshCw } from 'lucide-react'
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import AppShell from '@/components/AppShell'
-import AppointmentCard from '@/components/AppointmentCard'
+import AppointmentCard, { formatDate } from '@/components/AppointmentCard'
 import PetCard from '@/components/PetCard'
 import SummaryCard from '@/components/SummaryCard'
 import Modal from '@/components/Modal'
@@ -137,6 +137,7 @@ export default function Dashboard() {
               <AppointmentCard
                 key={item.id}
                 appointment={item}
+                onView={setSelectedAppointment}
                 onEdit={() => router.push(`/compromissos/${item.id}/editar`)}
                 onDelete={remove}
                 onComplete={toggleComplete}
@@ -147,7 +148,17 @@ export default function Dashboard() {
       </section>
 
       <Modal open={Boolean(selectedAppointment)} title="Detalhes do compromisso" onClose={() => setSelectedAppointment(null)}>
-        {selectedAppointment && <p>{selectedAppointment.title}</p>}
+        {selectedAppointment && (
+          <dl className="grid grid-cols-[auto_1fr] gap-x-[18px] gap-y-2.5 [&_dt]:font-bold [&_dt]:text-muted">
+            <dt>Compromisso</dt><dd>{selectedAppointment.title}</dd>
+            <dt>Pet</dt><dd>{selectedAppointment.pet}</dd>
+            <dt>Categoria</dt><dd>{selectedAppointment.category}</dd>
+            <dt>Data</dt><dd>{formatDate(selectedAppointment.date)}</dd>
+            <dt>Horário</dt><dd>{selectedAppointment.time}</dd>
+            <dt>Situação</dt><dd>{selectedAppointment.completed ? 'Concluído' : 'Pendente'}</dd>
+            <dt>Observações</dt><dd>{selectedAppointment.notes || 'Nenhuma observação.'}</dd>
+          </dl>
+        )}
       </Modal>
     </AppShell>
   )
