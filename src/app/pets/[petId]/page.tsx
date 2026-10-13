@@ -1,15 +1,16 @@
 import { ArrowLeft, CalendarDays, PawPrint, Weight } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import AppShell from '@/components/AppShell'
-import { pets } from '@/data/pets'
-
-export function generateStaticParams() {
-  return pets.map(pet => ({ petId: pet.id }))
-}
+import { getPet } from '@/database/pets/get-pet'
+import { currentUser } from '@/lib/session'
 
 export default async function PetProfile({ params }: PageProps<'/pets/[petId]'>) {
-  const { petId } = await params
-  const pet = pets.find(item => item.id === petId)
+  const user = await currentUser()
+  if (!user) redirect('/login')
+
+  const id = Number((await params).petId)
+  const pet = Number.isInteger(id) ? await getPet(id, user.id) : null
 
   if (!pet) {
     return (

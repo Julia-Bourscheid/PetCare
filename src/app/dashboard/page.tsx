@@ -8,9 +8,8 @@ import AppointmentCard from '@/components/AppointmentCard'
 import PetCard from '@/components/PetCard'
 import SummaryCard from '@/components/SummaryCard'
 import Modal from '@/components/Modal'
-import { pets } from '@/data/pets'
 import { api, errorMessage } from '@/services/api'
-import type { Appointment } from '@/types'
+import type { Appointment, Pet } from '@/types'
 
 // localStorage só existe no navegador; no servidor a saudação usa o nome padrão.
 const subscribeToUser = () => () => {}
@@ -19,6 +18,7 @@ const getServerUser = () => 'usuário'
 
 export default function Dashboard() {
   const router = useRouter()
+  const [pets, setPets] = useState<Pet[]>([])
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -26,10 +26,11 @@ export default function Dashboard() {
   const [filter, setFilter] = useState('Todos')
   const user = useSyncExternalStore(subscribeToUser, getUser, getServerUser)
 
-  function loadAppointments() {
-    return api.getAppointments()
-      .then(data => {
-        setAppointments(data)
+  function loadDashboard() {
+    return Promise.all([api.getPets(), api.getAppointments()])
+      .then(([petsData, appointmentsData]) => {
+        setPets(petsData)
+        setAppointments(appointmentsData)
         setError('')
       })
       .catch(err => setError(errorMessage(err)))
@@ -39,11 +40,11 @@ export default function Dashboard() {
   function retry() {
     setLoading(true)
     setError('')
-    loadAppointments()
+    loadDashboard()
   }
 
   useEffect(() => {
-    loadAppointments()
+    loadDashboard()
   }, [])
 
   const filtered = useMemo(() => {

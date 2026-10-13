@@ -5,9 +5,8 @@ import { useEffect, useState, type ChangeEvent, type SubmitEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AppShell from './AppShell'
-import { pets } from '../data/pets'
 import { api, errorMessage } from '../services/api'
-import type { AppointmentInput } from '../types'
+import type { AppointmentInput, Pet } from '../types'
 
 type FormErrors = Partial<Record<keyof AppointmentInput, string>>
 
@@ -24,9 +23,16 @@ export default function AppointmentForm({ id }: { id?: string }) {
   const router = useRouter()
   const editing = Boolean(id)
   const [form, setForm] = useState(initial)
+  const [pets, setPets] = useState<Pet[]>([])
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState('')
   const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    api.getPets()
+      .then(setPets)
+      .catch(err => setApiError(errorMessage(err)))
+  }, [])
 
   useEffect(() => {
     if (!id) return

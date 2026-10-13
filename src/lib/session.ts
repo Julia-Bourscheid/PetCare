@@ -36,7 +36,7 @@ export async function endSession() {
 
 export function unauthorized() {
   return Response.json(
-    { message: "Sua sessão expirou. Faça login novamente." },
+    { message: "Faça login para continuar." },
     { status: 401 },
   );
 }

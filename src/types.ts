@@ -5,7 +5,7 @@ export interface User {
 }
 
 export interface Pet {
-  id: string
+  id: number
   name: string
   type: string
   age: string

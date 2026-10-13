@@ -1,4 +1,4 @@
-import type { Appointment, AppointmentInput, User } from "@/types";
+import type { Appointment, AppointmentInput, Pet, User } from "@/types";
 
 const DEFAULT_ERROR = "Não foi possível concluir a operação.";
 
@@ -43,6 +43,7 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
   logout: () => request<null>("/api/auth/logout", { method: "POST" }),
+  getPets: () => request<Pet[]>("/api/pets"),
   getAppointments: () => request<Appointment[]>("/api/appointments"),
   createAppointment: (data: AppointmentInput) =>
     request<Appointment>("/api/appointments", {
