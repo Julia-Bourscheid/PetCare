@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [petModalOpen, setPetModalOpen] = useState(false)
   const [petSaving, setPetSaving] = useState(false)
   const [petForm, setPetForm] = useState(emptyPetForm)
+  const [petError, setPetError] = useState('')
 
   const [filter, setFilter] = useState('Todos')
   const [selectedSummary, setSelectedSummary] = useState<string | null>(null)
@@ -87,7 +88,7 @@ export default function Dashboard() {
     if (petSaving) return
 
     setPetSaving(true)
-    setError('')
+    setPetError('')
 
     try {
       const newPet = await api.createPet({
@@ -106,7 +107,7 @@ export default function Dashboard() {
       setPetModalOpen(false)
       setPetForm({ ...emptyPetForm })
     } catch (err) {
-      setError(errorMessage(err))
+      setPetError(errorMessage(err))
     } finally {
       setPetSaving(false)
     }
@@ -223,7 +224,7 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={() => {
-              setError('')
+              setPetError('')
               setPetModalOpen(true)
             }}
             className="self-start rounded-xl bg-primary px-5 py-3 font-bold text-white transition hover:opacity-90 sm:self-auto"
@@ -440,6 +441,12 @@ export default function Dashboard() {
               placeholder="Informações importantes sobre o pet"
             />
           </label>
+
+          {petError && (
+            <div className={errorBanner} role="alert">
+              {petError}
+            </div>
+          )}
 
           <button
             type="submit"
