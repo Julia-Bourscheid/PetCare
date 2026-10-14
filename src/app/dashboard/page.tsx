@@ -82,6 +82,34 @@ export default function Dashboard() {
     })
   }, [appointments, filter])
 
+  const summaryItems = [
+    {
+      icon: '🐾',
+      label: 'Pets cadastrados',
+      count: pets.length,
+    },
+    {
+      icon: '🍽️',
+      label: 'Refeições',
+      count: appointments.filter(a => a.category === 'Alimentação').length,
+    },
+    {
+      icon: '📅',
+      label: 'Rotina',
+      count: appointments.filter(a => a.category === 'Rotina').length,
+    },
+    {
+      icon: '🛁',
+      label: 'Banhos e higiene',
+      count: appointments.filter(a => a.category === 'Higiene').length,
+    },
+    {
+      icon: '💉',
+      label: 'Saúde',
+      count: appointments.filter(a => a.category === 'Saúde').length,
+    },
+  ].filter(item => item.count > 0)
+
   async function savePet(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -166,49 +194,20 @@ export default function Dashboard() {
 
       {/* Cartões de resumo */}
       <section
-        className="mb-[38px] mt-[38px] grid grid-cols-1 gap-[15px] md:grid-cols-4"
+        className={`mb-[38px] mt-[38px] grid grid-cols-1 gap-[15px] ${summaryItems.length > 4 ? 'md:grid-cols-3 lg:grid-cols-5' : 'md:grid-cols-4'}`}
         aria-label="Resumo"
       >
-        {[
-          {
-            icon: '🐾',
-            label: 'Pets cadastrados',
-            count: pets.length,
-          },
-          {
-            icon: '🍽️',
-            label: 'Refeições',
-            count: appointments.filter(a => a.category === 'Alimentação').length,
-          },
-          {
-            icon: '📅',
-            label: 'Rotina',
-            count: appointments.filter(a => a.category === 'Rotina').length,
-          },
-          {
-            icon: '🛁',
-            label: 'Banhos e higiene',
-            count: appointments.filter(a => a.category === 'Higiene').length,
-          },
-          {
-            icon: '💉',
-            label: 'Saúde',
-            count: appointments.filter(a => a.category === 'Saúde').length,
-          },
-        ]
-          .filter(item => item.count > 0)
-          .map(item => (
-            <SummaryCard
-              key={item.label}
-              icon={item.icon}
-              value={item.count}
-              label={item.label}
-              onClick={() => {
-                setSelectedSummary(item.label)
-              }}
-            />
-          ))
-        }
+        {summaryItems.map(item => (
+          <SummaryCard
+            key={item.label}
+            icon={item.icon}
+            value={item.count}
+            label={item.label}
+            onClick={() => {
+              setSelectedSummary(item.label)
+            }}
+          />
+        ))}
       </section>
 
       {/* Cadastro e listagem dos pets: aparece apenas uma vez */}
