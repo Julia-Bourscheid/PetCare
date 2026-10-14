@@ -1,4 +1,3 @@
-
 import type {
   Appointment,
   AppointmentInput,
@@ -57,6 +56,12 @@ export type PetInput = Omit<Pet, "id" | "vaccine"> & {
 };
 
 export const api = {
+  register: (name: string, email: string, password: string) =>
+    request<{ message: string; user: User }>("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    }),
+
   login: (email: string, password: string) =>
     request<User>("/api/auth/login", {
       method: "POST",
