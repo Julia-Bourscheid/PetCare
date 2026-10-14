@@ -54,9 +54,11 @@ npm start
 
 | Método | Endpoint | Função |
 |---|---|---|
+| POST | `/api/auth/register` | Cadastra um usuário |
 | POST | `/api/auth/login` | Faz login e cria a sessão |
 | POST | `/api/auth/logout` | Encerra a sessão |
 | GET | `/api/pets` | Lista os pets do usuário |
+| POST | `/api/pets` | Cadastra um pet |
 | GET | `/api/appointments` | Lista compromissos |
 | POST | `/api/appointments` | Cria compromisso |
 | PUT | `/api/appointments?id=ID` | Edita compromisso |
@@ -73,8 +75,9 @@ com hash scrypt.
 src/
   app/
     api/appointments/route.ts   # API REST (GET, POST, PUT, DELETE)
-    api/auth/                   # Login e logout
-    api/pets/route.ts           # Pets do usuário
+    api/auth/                   # Cadastro, login e logout
+    api/pets/route.ts           # Pets do usuário (listar e cadastrar)
+    cadastro/                   # Cadastro de usuário
     compromissos/novo/          # Novo compromisso
     compromissos/[id]/editar/   # Editar compromisso
     dashboard/                  # Painel
