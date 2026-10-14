@@ -42,6 +42,7 @@ export default function Dashboard() {
   const [petForm, setPetForm] = useState(emptyPetForm)
 
   const [filter, setFilter] = useState('Todos')
+  const [selectedSummary, setSelectedSummary] = useState<string | null>(null)
 
   function loadDashboard() {
     return Promise.all([api.getPets(), api.getAppointments()])
@@ -65,8 +66,17 @@ export default function Dashboard() {
   }, [])
 
   const filtered = useMemo(() => {
-    if (filter === 'Todos') return appointments
-    return appointments.filter(item => item.category === filter)
+    const result = filter === 'Todos'
+      ? appointments
+      : appointments.filter(item => item.category === filter)
+
+    return [...result].sort((a, b) => {
+      const dateComparison = a.date.localeCompare(b.date)
+
+      if (dateComparison !== 0) return dateComparison
+
+      return (a.time || '').localeCompare(b.time || '')
+    })
   }, [appointments, filter])
 
   async function savePet(event: FormEvent<HTMLFormElement>) {
@@ -133,23 +143,80 @@ export default function Dashboard() {
 
   return (
     <AppShell>
+      {/* Cabeçalho do painel */}
+      <section className="mb-7">
+        <h1 className="text-2xl font-bold text-primary-dark">
+          Meu painel
+        </h1>
+        <p className="mt-1 text-sm text-muted">
+          Acompanhe seus pets e organize os compromissos.
+        </p>
+      </section>
+
+      {/* Cartões de resumo */}
+      <section
+        className="mb-[38px] mt-[38px] grid grid-cols-1 gap-[15px] md:grid-cols-4"
+        aria-label="Resumo"
+      >
+        {[
+          {
+            icon: '🐾',
+            label: 'Pets cadastrados',
+            count: pets.length,
+          },
+          {
+            icon: '🍽️',
+            label: 'Refeições',
+            count: appointments.filter(a => a.category === 'Alimentação').length,
+          },
+          {
+            icon: '📅',
+            label: 'Rotina',
+            count: appointments.filter(a => a.category === 'Rotina').length,
+          },
+          {
+            icon: '🛁',
+            label: 'Banhos e higiene',
+            count: appointments.filter(a => a.category === 'Higiene').length,
+          },
+          {
+            icon: '💉',
+            label: 'Saúde',
+            count: appointments.filter(a => a.category === 'Saúde').length,
+          },
+        ]
+          .filter(item => item.count > 0)
+          .map(item => (
+            <SummaryCard
+              key={item.label}
+              icon={item.icon}
+              value={item.count}
+              label={item.label}
+              onClick={() => {
+                setSelectedSummary(item.label)
+              }}
+            />
+          ))
+        }
+      </section>
+
       {/* Cadastro e listagem dos pets: aparece apenas uma vez */}
       <section className="mt-[38px]">
-        <div className="mb-4">
-          <h2>Seus pets</h2>
-          <p className="text-muted">
-            Selecione um pet para ver seus detalhes.
-          </p>
-        </div>
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2>Seus pets</h2>
+            <p className="text-muted">
+              Selecione um pet para ver seus detalhes.
+            </p>
+          </div>
 
-        <div className="mb-5 flex justify-end">
           <button
             type="button"
             onClick={() => {
               setError('')
               setPetModalOpen(true)
             }}
-            className="rounded-xl bg-primary px-5 py-3 font-bold text-white transition hover:opacity-90"
+            className="self-start rounded-xl bg-primary px-5 py-3 font-bold text-white transition hover:opacity-90 sm:self-auto"
           >
             + Cadastrar pet
           </button>
@@ -181,34 +248,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Cartões de resumo */}
-      <section
-        className="mb-[38px] mt-[38px] grid grid-cols-1 gap-[15px] md:grid-cols-3"
-        aria-label="Resumo"
-      >
-        <SummaryCard
-          icon="🐾"
-          value={pets.length}
-          label="Pets cadastrados"
-        />
-
-        <SummaryCard
-          icon="💉"
-          value="1"
-          label="Vacina pendente"
-          detail="Próxima: 15/10"
-        />
-
-        <SummaryCard
-          icon="🍽️"
-          value={
-            appointments.filter(a => a.category === 'Alimentação').length
-          }
-          label="Refeições"
-          detail="Hoje"
-        />
-      </section>
-
       {/* Próximos compromissos */}
       <section className="mt-[38px]">
         <div className="mb-4 flex flex-col items-stretch gap-5 md:flex-row md:items-end md:justify-between">
@@ -232,11 +271,10 @@ export default function Dashboard() {
             ].map(option => (
               <button
                 key={option}
-                className={`rounded-[9px] border px-2.5 py-[7px] text-[.8rem] font-bold ${
-                  filter === option
-                    ? 'border-[#bfd2c9] bg-primary-light text-primary-dark'
-                    : 'border-line bg-white text-muted hover:border-[#bfd2c9] hover:bg-primary-light hover:text-primary-dark'
-                }`}
+                className={`rounded-[9px] border px-2.5 py-[7px] text-[.8rem] font-bold ${filter === option
+                  ? 'border-[#bfd2c9] bg-primary-light text-primary-dark'
+                  : 'border-line bg-white text-muted hover:border-[#bfd2c9] hover:bg-primary-light hover:text-primary-dark'
+                  }`}
                 aria-pressed={filter === option}
                 onClick={() => setFilter(option)}
               >
@@ -256,17 +294,24 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid gap-2.5">
-            {filtered.map(item => (
-              <AppointmentCard
-                key={item.id}
-                appointment={item}
-                onView={setSelectedAppointment}
-                onEdit={() =>
-                  router.push(`/compromissos/${item.id}/editar`)
-                }
-                onDelete={remove}
-                onComplete={toggleComplete}
-              />
+            {filtered.map((item, index) => (
+              <div key={item.id} className="flex items-center gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-light font-bold text-primary-dark">
+                  {index + 1}
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <AppointmentCard
+                    appointment={item}
+                    onView={setSelectedAppointment}
+                    onEdit={() =>
+                      router.push(`/compromissos/${item.id}/editar`)
+                    }
+                    onDelete={remove}
+                    onComplete={toggleComplete}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -430,6 +475,67 @@ export default function Dashboard() {
             </dd>
           </dl>
         )}
+      </Modal>
+
+      {/* Modal de resumo */}
+      <Modal
+        open={selectedSummary !== null}
+        title={selectedSummary ?? 'Resumo'}
+        onClose={() => setSelectedSummary(null)}
+      >
+        <div className="grid gap-3">
+          {selectedSummary === 'Pets cadastrados' ? (
+            pets.length === 0 ? (
+              <p className="text-muted">Nenhum pet cadastrado.</p>
+            ) : (
+              pets.map(pet => (
+                <div
+                  key={pet.id}
+                  className="rounded-xl border border-line p-4"
+                >
+                  <strong>{pet.name}</strong>
+                  <p className="text-sm text-muted">
+                    {pet.type} · {pet.breed}
+                  </p>
+                </div>
+              ))
+            )
+          ) : (
+            appointments
+              .filter(item => {
+                const categoryByLabel: Record<string, string> = {
+                  Refeições: 'Alimentação',
+                  Rotina: 'Rotina',
+                  'Banhos e higiene': 'Higiene',
+                  Saúde: 'Saúde',
+                }
+
+                return item.category === categoryByLabel[selectedSummary ?? '']
+              })
+              .sort((a, b) => {
+                const dateComparison = a.date.localeCompare(b.date)
+                if (dateComparison !== 0) return dateComparison
+                return (a.time || '').localeCompare(b.time || '')
+              })
+              .map(item => (
+                <div
+                  key={item.id}
+                  className="rounded-xl border border-line p-4"
+                >
+                  <strong>{item.title}</strong>
+                  <p className="mt-1 text-sm text-muted">
+                    Animal: {item.pet}
+                  </p>
+                  <p className="text-sm text-muted">
+                    O que fazer: {item.title}
+                  </p>
+                  <p className="text-sm text-muted">
+                    Data: {formatDate(item.date)} · Horário: {item.time || 'Não informado'}
+                  </p>
+                </div>
+              ))
+          )}
+        </div>
       </Modal>
     </AppShell>
   )
