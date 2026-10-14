@@ -9,7 +9,7 @@ import AppointmentCard, { formatDate } from '@/components/AppointmentCard'
 import PetCard from '@/components/PetCard'
 import SummaryCard from '@/components/SummaryCard'
 import Modal from '@/components/Modal'
-import { errorBanner } from '@/components/ui'
+import { errorBanner, secondaryButton } from '@/components/ui'
 import { api, errorMessage } from '@/services/api'
 import type { Appointment, Pet } from '@/types'
 
@@ -43,7 +43,9 @@ export default function Dashboard() {
 
   const [filter, setFilter] = useState('Todos')
   const [selectedSummary, setSelectedSummary] = useState<string | null>(null)
-
+  const [appointmentToDelete, setAppointmentToDelete] =
+    useState<Appointment | null>(null)
+  const [deleting, setDeleting] = useState(false)
   function loadDashboard() {
     return Promise.all([api.getPets(), api.getAppointments()])
       .then(([petsData, appointmentsData]) => {
@@ -110,18 +112,26 @@ export default function Dashboard() {
     }
   }
 
-  async function remove(id: string) {
-    if (!window.confirm('Deseja realmente excluir este compromisso?')) {
-      return
-    }
+  function askDelete(id: string) {
+    const item = appointments.find(a => a.id === id)
+    if (item) setAppointmentToDelete(item)
+  }
 
+  async function confirmDelete() {
+    if (!appointmentToDelete || deleting) return
+
+    setDeleting(true)
     try {
-      await api.deleteAppointment(id)
+      await api.deleteAppointment(appointmentToDelete.id)
       setAppointments(current =>
-        current.filter(item => item.id !== id),
+        current.filter(item => item.id !== appointmentToDelete.id),
       )
+      setAppointmentToDelete(null)
     } catch (err) {
       setError(errorMessage(err))
+      setAppointmentToDelete(null)
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -307,7 +317,7 @@ export default function Dashboard() {
                     onEdit={() =>
                       router.push(`/compromissos/${item.id}/editar`)
                     }
-                    onDelete={remove}
+                    onDelete={askDelete}
                     onComplete={toggleComplete}
                   />
                 </div>
@@ -439,6 +449,44 @@ export default function Dashboard() {
             {petSaving ? 'Salvando...' : 'Salvar pet'}
           </button>
         </form>
+      </Modal>
+
+      {/* Modal de confirmação de exclusão */}
+      <Modal
+        open={appointmentToDelete !== null}
+        title="Excluir compromisso"
+        role="alertdialog"
+        describedBy="delete-description"
+        onClose={() => {
+          if (!deleting) setAppointmentToDelete(null)
+        }}
+      >
+        <p id="delete-description" className="text-muted">
+          Deseja realmente excluir{' '}
+          <strong className="text-ink">{appointmentToDelete?.title}</strong>
+          {appointmentToDelete?.pet && <> de {appointmentToDelete.pet}</>}?
+          Essa ação não pode ser desfeita.
+        </p>
+
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
+            className={secondaryButton}
+            onClick={() => setAppointmentToDelete(null)}
+            disabled={deleting}
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            className="inline-flex items-center justify-center rounded-[11px] bg-danger px-[17px] py-[11px] font-extrabold text-white transition hover:opacity-90 disabled:cursor-wait disabled:opacity-65"
+            onClick={confirmDelete}
+            disabled={deleting}
+          >
+            {deleting ? 'Excluindo...' : 'Excluir'}
+          </button>
+        </div>
       </Modal>
 
       {/* Modal de detalhes do compromisso */}
