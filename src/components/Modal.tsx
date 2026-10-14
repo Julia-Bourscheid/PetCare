@@ -1,4 +1,4 @@
-
+import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -15,6 +15,16 @@ export default function Modal({
   children,
   onClose,
 }: ModalProps) {
+  useEffect(() => {
+    if (!open) return
+
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [open])
+
   if (!open) return null
 
   return (
