@@ -105,35 +105,35 @@ export default function AppointmentForm({ id }: { id?: string }) {
 
             <div className="min-w-0">
               <label className={fieldLabel} htmlFor="petId">Pet <span className="text-danger">*</span></label>
-              <select className={fieldInput} id="petId" name="petId" value={form.petId} onChange={change} aria-invalid={Boolean(errors.petId)}>
+              <select className={fieldInput} id="petId" name="petId" value={form.petId} onChange={change} aria-invalid={Boolean(errors.petId)} aria-describedby={errors.petId ? 'petId-error' : undefined}>
                 <option value="">Selecione</option>
                 {pets.map(pet => <option key={pet.id} value={pet.id}>{pet.icon} {pet.name}</option>)}
               </select>
-              {errors.petId && <small className={fieldError}>{errors.petId}</small>}
+              {errors.petId && <small id="petId-error" className={fieldError}>{errors.petId}</small>}
             </div>
 
             <div className="min-w-0">
               <label className={fieldLabel} htmlFor="category">Categoria <span className="text-danger">*</span></label>
-              <select className={fieldInput} id="category" name="category" value={form.category} onChange={change} aria-invalid={Boolean(errors.category)}>
+              <select className={fieldInput} id="category" name="category" value={form.category} onChange={change} aria-invalid={Boolean(errors.category)} aria-describedby={errors.category ? 'category-error' : undefined}>
                 <option value="">Selecione</option>
                 <option>Alimentação</option>
                 <option>Rotina</option>
                 <option>Higiene</option>
                 <option>Saúde</option>
               </select>
-              {errors.category && <small className={fieldError}>{errors.category}</small>}
+              {errors.category && <small id="category-error" className={fieldError}>{errors.category}</small>}
             </div>
 
             <div className="min-w-0">
               <label className={fieldLabel} htmlFor="date">Data <span className="text-danger">*</span></label>
-              <input className={fieldInput} id="date" name="date" type="date" value={form.date} onChange={change} aria-invalid={Boolean(errors.date)} />
-              {errors.date && <small className={fieldError}>{errors.date}</small>}
+              <input className={fieldInput} id="date" name="date" type="date" value={form.date} onChange={change} aria-invalid={Boolean(errors.date)} aria-describedby={errors.date ? 'date-error' : undefined} />
+              {errors.date && <small id="date-error" className={fieldError}>{errors.date}</small>}
             </div>
 
             <div className="min-w-0">
               <label className={fieldLabel} htmlFor="time">Horário <span className="text-danger">*</span></label>
-              <input className={fieldInput} id="time" name="time" type="time" value={form.time} onChange={change} aria-invalid={Boolean(errors.time)} />
-              {errors.time && <small className={fieldError}>{errors.time}</small>}
+              <input className={fieldInput} id="time" name="time" type="time" value={form.time} onChange={change} aria-invalid={Boolean(errors.time)} aria-describedby={errors.time ? 'time-error' : undefined} />
+              {errors.time && <small id="time-error" className={fieldError}>{errors.time}</small>}
             </div>
 
             <div className="min-w-0 md:col-span-2">
