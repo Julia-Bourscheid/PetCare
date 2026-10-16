@@ -26,13 +26,15 @@ Aplicação responsiva para organização da rotina e dos cuidados de pets.
 - Lucide React
 - Next.js Route Handlers (API)
 - PostgreSQL (Supabase) com `pg`
+- Microsoft Clarity (`@microsoft/clarity`)
 
 ## Executar localmente
 
 1. Copie `.env.example` para `.env` e preencha `DATABASE_URI` com a URL do
    **Session pooler** do Supabase (Connect > Session pooler). A conexão direta
    `db.<project-ref>.supabase.co` só tem IPv6 e não funciona em redes sem IPv6
-   nem na Vercel.
+   nem na Vercel. Para gravar sessões no Microsoft Clarity, preencha também
+   `CLARITY_PROJECT_ID` (opcional).
 2. Instale as dependências e crie as tabelas com os dados de demonstração:
 
 ```bash
@@ -86,6 +88,7 @@ src/
     layout.tsx                  # Layout raiz (HTML, fonte, metadados)
     globals.css
   components/
+    ClarityScript.tsx           # Carrega o Microsoft Clarity no navegador
     ui.ts                       # Classes Tailwind compartilhadas
   database/                     # Conexão, schema, seed e consultas SQL
   lib/                          # Senha, sessão e validação de uuid

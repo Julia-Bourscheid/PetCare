@@ -13,6 +13,7 @@
     "db:setup": "node --env-file-if-exists=.env scripts/db-setup.mjs"
   },
   "dependencies": {
+    "@microsoft/clarity": "^1.0.2",
     "lucide-react": "^0.468.0",
     "next": "^16.4.0",
     "pg": "^8.23.1",
