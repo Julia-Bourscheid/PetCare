@@ -34,7 +34,9 @@ Aplicação responsiva para organização da rotina e dos cuidados de pets.
    **Session pooler** do Supabase (Connect > Session pooler). A conexão direta
    `db.<project-ref>.supabase.co` só tem IPv6 e não funciona em redes sem IPv6
    nem na Vercel. Para gravar sessões no Microsoft Clarity, preencha também
-   `CLARITY_PROJECT_ID` (opcional).
+   `CLARITY_PROJECT_ID` (opcional). O Clarity só é carregado depois que o
+   visitante aceita o aviso de cookies; a escolha fica no cookie
+   `petcare_consent` por um ano.
 2. Instale as dependências e crie as tabelas com os dados de demonstração:
 
 ```bash
@@ -89,6 +91,7 @@ src/
     globals.css
   components/
     ClarityScript.tsx           # Carrega o Microsoft Clarity no navegador
+    CookieConsent.tsx           # Aviso de cookies; libera o Clarity ao aceitar
     ui.ts                       # Classes Tailwind compartilhadas
   database/                     # Conexão, schema, seed e consultas SQL
   lib/                          # Senha, sessão e validação de uuid
