@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Nunito } from 'next/font/google'
-import ClarityScript from '@/components/ClarityScript'
+import CookieConsent from '@/components/CookieConsent'
 import './globals.css'
 
 const nunito = Nunito({
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="pt-BR" className={nunito.variable}>
       <body className="min-w-80 bg-page font-sans text-ink">
         {children}
-        <ClarityScript projectId={process.env.CLARITY_PROJECT_ID} />
+        <CookieConsent clarityProjectId={process.env.CLARITY_PROJECT_ID} />
       </body>
     </html>
   )
