@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Nunito } from 'next/font/google'
+import ClarityScript from '@/components/ClarityScript'
 import './globals.css'
 
 const nunito = Nunito({
@@ -15,7 +16,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="pt-BR" className={nunito.variable}>
-      <body className="min-w-80 bg-page font-sans text-ink">{children}</body>
+      <body className="min-w-80 bg-page font-sans text-ink">
+        {children}
+        <ClarityScript projectId={process.env.CLARITY_PROJECT_ID} />
+      </body>
     </html>
   )
 }
